@@ -1,6 +1,6 @@
 # Oplog broadcast
 
-- Haskell Server tails Mongo oplog and broadcast changes to the collection `quotes.quote` and broadcast them to all subscribed clients.
+- Haskell Server tails Mongo oplog and broadcast changes to the collection `quotes.quote` and broadcast them to all subscribed clients. Quotes are dead trivial and contain just a symbol and a price.
 - An Elm SPA client as well as a Haskell CLI client.
 - A haskell script to repeatedly update some fake quotes
 
@@ -20,6 +20,8 @@ If you don't have these already, install:
 
 Using the `mongo` CLI tool, run the commands in the file `app/create_quote_coll.mongodb`
 ## Building
+
+:warning: Stack could take a really long time if running for first time.
 
 Clone this repo, and from the top level directory of this repo, run:
 ```
