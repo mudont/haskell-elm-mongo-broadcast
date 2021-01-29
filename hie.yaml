@@ -1,0 +1,31 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "oplog-broadcast:lib"
+
+    - path: "./app/Main.hs"
+      component: "oplog-broadcast:exe:oplog-broadcast-exe"
+
+    - path: "./app/Paths_oplog_broadcast.hs"
+      component: "oplog-broadcast:exe:oplog-broadcast-exe"
+
+    - path: "./app/oplogtest.hs"
+      component: "oplog-broadcast:exe:oplog-test-exe"
+
+    - path: "./app/Main.hs"
+      component: "oplog-broadcast:exe:oplog-test-exe"
+
+    - path: "./app/Paths_oplog_broadcast.hs"
+      component: "oplog-broadcast:exe:oplog-test-exe"
+
+    - path: "./app/wsClient.hs"
+      component: "oplog-broadcast:exe:ws-client-exe"
+
+    - path: "./app/Main.hs"
+      component: "oplog-broadcast:exe:ws-client-exe"
+
+    - path: "./app/Paths_oplog_broadcast.hs"
+      component: "oplog-broadcast:exe:ws-client-exe"
+
+    - path: "./test"
+      component: "oplog-broadcast:test:oplog-test"
