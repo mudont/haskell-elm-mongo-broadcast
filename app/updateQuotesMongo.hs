@@ -33,16 +33,33 @@ import Database.MongoDB
 import Database.MongoDB.Query
 import System.Random
 
+numUpdateCycles :: Int
+numUpdateCycles = 25
+
+pauseBetweenUpdatesMicrosecs :: Int
+pauseBetweenUpdatesMicrosecs = 1000 * 1000 -- 1000*1000 = 1 second
+
 db :: Text
 db = "quotes"
 
 collName :: Text
 collName = "quote"
 
+initialRows :: [(String, Float)]
+initialRows =
+  [ ("IBM", 63.12),
+    ("MSFT", 73.12),
+    ("T", 83.12),
+    ("AMZN", 13.12),
+    ("WMT", 23.12),
+    ("CLZ4", 63.12),
+    ("GOOG", 663.12)
+  ]
+
 main :: IO ()
 main = do
   pipe <- connect (host "127.0.0.1")
-  e <- access pipe master db $ run (25 * 1)
+  e <- access pipe master db $ run numUpdateCycles
   close pipe
   print e
 
@@ -52,7 +69,7 @@ run max = do
         --clearQuotes
         insertQuotes
         --allQuotes >>= printDocs "All Quotes"
-        liftIO $ threadDelay (1000 * 1000) -- micro secs
+        liftIO $ threadDelay pauseBetweenUpdatesMicrosecs
         -- print n
         when (n `mod` 1000 == 0) $ print n
         when (n < max) $ loop (n + 1)
@@ -66,20 +83,10 @@ getNRands = ($ randomRIO (-1.0, 1 :: Float)) . replicateM
 
 getRows :: IO [(Selector, Document, [UpdateOption])]
 getRows = do
-  rands <- getNRands $ length rows
+  rands <- getNRands $ length initialRows
   return $
     map (\r -> (["instrumentSymbol" =: fst r], ["instrumentSymbol" =: fst r, "price" =: snd r], [Upsert])) $
-      zipWith (\r p -> (fst r, snd r + p)) rows rands
-  where
-    rows :: [(String, Float)] =
-      [ ("IBM", 63.12),
-        ("MSFT", 73.12),
-        ("T", 83.12),
-        ("AMZN", 13.12),
-        ("WMT", 23.12),
-        ("CLZ4", 63.12),
-        ("GOOG", 663.12)
-      ]
+      zipWith (\r p -> (fst r, snd r + p)) initialRows rands
 
 insertQuotes :: Action IO WriteResult
 insertQuotes = do

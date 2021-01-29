@@ -58,7 +58,16 @@ tailOpLog pipe f = do
   bracket acquire release (run . loop)
   putStrLn "Done"
   where
-    foo2 = find $ (select ["ns" =: "murali.quote", ["$or" =: [["op" =: "i"], ["op" =: "u"]]]] opLogColl) {options = [TailableCursor, AwaitData, NoCursorTimeout]}
+    foo2 =
+      find $
+        ( select
+            [ "ns" =: "quotes.quote",
+              "$or" =: [["op" =: "i"], ["op" =: "u"]]
+            ]
+            opLogColl
+        )
+          { options = [TailableCursor, AwaitData, NoCursorTimeout]
+          }
     acquire = run foo2
     release x = do
       print $ "mongodb: " ++ "Closing opLog cursor..."
