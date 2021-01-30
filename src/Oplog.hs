@@ -54,6 +54,7 @@ tailOpLog pipe f = do
   return ()
   where
     acquire =
+      -- We pick up inserts and updates to the single collection quotes.quote
       Mongo.access pipe Mongo.master localDb . Mongo.find $
         ( Mongo.select
             [ "ns" =: "quotes.quote",

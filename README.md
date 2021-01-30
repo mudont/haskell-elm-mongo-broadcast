@@ -2,9 +2,8 @@
 
 - Haskell Server tails Mongo oplog and broadcast changes to the collection `quotes.quote` and broadcast them to all subscribed clients. Quotes are dead trivial and contain just a symbol and a price.
 - An Elm SPA client as well as a Haskell CLI client.
-- A haskell script to repeatedly update some fake quotes
+- A haskell script to repeatedly update a handful of fake securities with fake prices.
 
-[Servant](https://www.servant.dev/) is pretty much completely unnecessary, but that is what I am using for all Web servers. The code would probably be much shorter and easier to read if written win with plain WAI. Sorry
 
 ## Pre-requistes
 
@@ -14,7 +13,7 @@ If you don't have these already, install:
 - [Elm](https://elm-lang.org/):
 - [create-elm-app](https://github.com/halfzebra/create-elm-app):\
   ```npm install create-elm-app -g```
-- [MongoDB](https://docs.mongodb.com/manual/installation/) 
+- [MongoDB](https://docs.mongodb.com/manual/installation/) (version 4.4 known to work)
 
 ## Initialize Mongo database
 
@@ -31,7 +30,7 @@ cd elm-client; elm-app build
 ## Running the server
 In the root folder of the repository, run 
 ```
-stack run mongo-broadcast
+stack run ws-server
 ```
 
 ## Open Elm client
@@ -53,5 +52,13 @@ stack run ws-client
 ```
 app/updateQuotesMongo.hs
 ```
+## tail mongo oplog and show raw oplog documents
+```
+app/tailOplog.hs
+```
 
-You should see the quotes ricking in the Elm client and the CLI client should write them to the 
+You should see the quotes ticking in the Elm client and the CLI client writing them to the console 
+
+## Known Issues
+- Assumes default Mongo port, hardcodes HTTP port 8080
+- Hardcodes db/collection names

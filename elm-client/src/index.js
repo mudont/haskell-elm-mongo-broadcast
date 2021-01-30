@@ -18,18 +18,7 @@ app.ports.sendMessage.subscribe(function (message) {
 // When a message comes into our WebSocket, we pass the message along
 // to the `messageReceiver` port.
 socket.addEventListener("message", function (event) {
-  //console.log(event.data);
-  //console.log(typeof event.data)
-  if (typeof event.data === "----string") {
-    //create a JSON object
-    var jsonObject = JSON.parse(event.data);
-    var price = jsonObject.price;
-    //console.log(price);
-    app.ports.messageReceiver.send(jsonObject);
-  } else {
-    //console.log('not string type')
-    app.ports.messageReceiver.send(event.data);
-  }
+  app.ports.messageReceiver.send(event.data);
 });
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6917eb204ac43d16afd445690d5444bc644d9e8b974ac6eaf06eeec29382f6b3
+-- hash: 764ed8ccb694816f46df9f9059f333c9357b529f2ea7f339bd3d6d66133b252f
 
 name:           haskell-elm-mongo-broadcast
 version:        0.1.0.0
@@ -27,14 +27,7 @@ source-repository head
 
 library
   exposed-modules:
-      Api
-      App
-      Common
-      Error
-      Handlers
-      Hubs
       Json
-      Lib
       Oplog
   other-modules:
       Paths_haskell_elm_mongo_broadcast
@@ -44,6 +37,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bson
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -56,6 +50,7 @@ library
     , mongoDB
     , mtl
     , network
+    , random
     , servant
     , servant-auth
     , servant-auth-server
@@ -71,21 +66,15 @@ library
     , wai-app-static
     , wai-cors
     , wai-logger
+    , wai-websockets
     , warp
     , websockets
   default-language: Haskell2010
 
-executable mongo-broadcast
-  main-is: Main.hs
+executable chat-client
+  main-is: chatClient.hs
   other-modules:
-      Api
-      App
-      Common
-      Error
-      Handlers
-      Hubs
       Json
-      Lib
       Oplog
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
@@ -96,6 +85,7 @@ executable mongo-broadcast
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bson
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -108,6 +98,7 @@ executable mongo-broadcast
     , mongoDB
     , mtl
     , network
+    , random
     , servant
     , servant-auth
     , servant-auth-server
@@ -123,6 +114,103 @@ executable mongo-broadcast
     , wai-app-static
     , wai-cors
     , wai-logger
+    , wai-websockets
+    , warp
+    , websockets
+  default-language: Haskell2010
+
+executable tailOplog
+  main-is: tailOplog.hs
+  other-modules:
+      Json
+      Oplog
+      Paths_haskell_elm_mongo_broadcast
+  hs-source-dirs:
+      app
+      src
+  default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bson
+    , bytestring
+    , case-insensitive
+    , classy-prelude
+    , containers
+    , data-has
+    , exceptions
+    , ghc-prim
+    , http-types
+    , jose
+    , mongoDB
+    , mtl
+    , network
+    , random
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-server
+    , servant-websockets
+    , split
+    , stm
+    , text
+    , threads
+    , time
+    , uuid
+    , wai
+    , wai-app-static
+    , wai-cors
+    , wai-logger
+    , wai-websockets
+    , warp
+    , websockets
+  default-language: Haskell2010
+
+executable update-quotes-mongo
+  main-is: updateQuotesMongo.hs
+  other-modules:
+      Json
+      Oplog
+      Paths_haskell_elm_mongo_broadcast
+  hs-source-dirs:
+      app
+      src
+  default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bson
+    , bytestring
+    , case-insensitive
+    , classy-prelude
+    , containers
+    , data-has
+    , exceptions
+    , ghc-prim
+    , http-types
+    , jose
+    , mongoDB
+    , mtl
+    , network
+    , random
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-server
+    , servant-websockets
+    , split
+    , stm
+    , text
+    , threads
+    , time
+    , uuid
+    , wai
+    , wai-app-static
+    , wai-cors
+    , wai-logger
+    , wai-websockets
     , warp
     , websockets
   default-language: Haskell2010
@@ -130,15 +218,18 @@ executable mongo-broadcast
 executable ws-client
   main-is: wsClient.hs
   other-modules:
-      Main
+      Json
+      Oplog
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
+      src
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bson
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -151,6 +242,7 @@ executable ws-client
     , mongoDB
     , mtl
     , network
+    , random
     , servant
     , servant-auth
     , servant-auth-server
@@ -166,6 +258,55 @@ executable ws-client
     , wai-app-static
     , wai-cors
     , wai-logger
+    , wai-websockets
+    , warp
+    , websockets
+  default-language: Haskell2010
+
+executable ws-server
+  main-is: wsServer.hs
+  other-modules:
+      Json
+      Oplog
+      Paths_haskell_elm_mongo_broadcast
+  hs-source-dirs:
+      app
+      src
+  default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bson
+    , bytestring
+    , case-insensitive
+    , classy-prelude
+    , containers
+    , data-has
+    , exceptions
+    , ghc-prim
+    , http-types
+    , jose
+    , mongoDB
+    , mtl
+    , network
+    , random
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-server
+    , servant-websockets
+    , split
+    , stm
+    , text
+    , threads
+    , time
+    , uuid
+    , wai
+    , wai-app-static
+    , wai-cors
+    , wai-logger
+    , wai-websockets
     , warp
     , websockets
   default-language: Haskell2010
@@ -182,6 +323,7 @@ test-suite oplog-test
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bson
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -194,6 +336,7 @@ test-suite oplog-test
     , mongoDB
     , mtl
     , network
+    , random
     , servant
     , servant-auth
     , servant-auth-server
@@ -209,6 +352,7 @@ test-suite oplog-test
     , wai-app-static
     , wai-cors
     , wai-logger
+    , wai-websockets
     , warp
     , websockets
   default-language: Haskell2010
