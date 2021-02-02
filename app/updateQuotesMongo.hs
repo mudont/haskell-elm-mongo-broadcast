@@ -9,6 +9,7 @@
 module Main (main) where
 
 import ClassyPrelude hiding (delete, find, sort)
+import Config
 import Control.Concurrent
 import Control.Monad.Trans (liftIO)
 import Database.MongoDB
@@ -33,32 +34,9 @@ import Database.MongoDB
 import Database.MongoDB.Query
 import System.Random
 
-numUpdateCycles :: Int
-numUpdateCycles = 25
-
-pauseBetweenUpdatesMicrosecs :: Int
-pauseBetweenUpdatesMicrosecs = 1000 * 1000 -- 1000*1000 = 1 second
-
-db :: Text
-db = "quotes"
-
-collName :: Text
-collName = "quote"
-
-initialRows :: [(String, Float)]
-initialRows =
-  [ ("IBM", 63.12),
-    ("MSFT", 73.12),
-    ("T", 83.12),
-    ("AMZN", 13.12),
-    ("WMT", 23.12),
-    ("CLZ4", 63.12),
-    ("GOOG", 663.12)
-  ]
-
 main :: IO ()
 main = do
-  pipe <- connect (host "127.0.0.1")
+  pipe <- connect mongoHost
   e <- access pipe master db $ run numUpdateCycles
   close pipe
   print e

@@ -20,6 +20,7 @@ module Main where
 
 -- import ClassyPrelude hiding (bracket, find)
 
+import Config
 import qualified Control.Concurrent.Thread as Thread
 import Control.Exception
 import Control.Monad.IO.Class (liftIO)
@@ -30,7 +31,9 @@ import Database.MongoDB
     Cursor,
     Database,
     Document,
+    Host (Host),
     Pipe,
+    PortID (PortNumber),
     Query (options),
     QueryOption (AwaitData, NoCursorTimeout, TailableCursor),
     Select (select),
@@ -42,16 +45,11 @@ import Database.MongoDB
     host,
     master,
     nextBatch,
+    readHostPort,
     (=:),
   )
 
 -- import GHC.Types
-
-localDb :: Database
-localDb = "local"
-
-opLogColl :: Collection
-opLogColl = "oplog.rs"
 
 tailOpLog :: Pipe -> ([Document] -> IO ()) -> IO ()
 tailOpLog pipe f = do
@@ -87,7 +85,7 @@ tailOpLog pipe f = do
 main :: IO ()
 main = do
   print $ "main" ++ "Starting..."
-  (threadId, wait) <- Thread.forkIO $ bracket (connect (host "127.0.0.1")) close $ \pipe -> tailOpLog pipe print
+  (threadId, wait) <- Thread.forkIO $ bracket (connect mongoHost) close $ \pipe -> tailOpLog pipe print
   print $ "Thread forked " ++ show threadId
   result <- wait
   print $ "Thread done. Result = " ++ show result
