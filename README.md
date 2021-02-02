@@ -18,6 +18,13 @@ If you don't have these already, install:
 ## Initialize Mongo database
 
 Using the `mongo` CLI tool, run the commands in the file `app/create_quote_coll.mongodb`
+
+## Config
+
+Edit `src/Config.hs`
+
+Edit the websocket url in `elm-client/src/index.js`
+
 ## Building
 
 :warning: Stack could take a really long time if running for first time.
