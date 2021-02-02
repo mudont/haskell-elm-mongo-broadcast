@@ -2,16 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
--- {-# LANGUAGE NoConstraintKinds #-}
--- {-# LANGUAGE NoDataKinds #-}
--- {-# LANGUAGE NoDeriveGeneric #-}
--- {-# LANGUAGE NoFlexibleContexts #-}
--- {-# LANGUAGE NoFlexibleInstances #-}
--- {-# LANGUAGE NoGeneralizedNewtypeDeriving #-}
--- {-# LANGUAGE NoMultiParamTypeClasses #-}
--- {-# LANGUAGE NoTemplateHaskell #-}
--- {-# LANGUAGE NoTypeFamilies #-}
--- {-# LANGUAGE NoTypeOperators #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
 -- stack script --resolver lts-16.11
@@ -21,9 +11,11 @@ module Oplog where
 -- import ClassyPrelude hiding (bracket, find)
 import ClassyPrelude
 import qualified ClassyPrelude as PL
+-- import Control.Exception ( bracket )
+
+import Config
 import Control.Concurrent
 import qualified Control.Concurrent.Thread as Thread
--- import Control.Exception ( bracket )
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (ToJSON (..))
 import Data.Text ()
@@ -32,12 +24,6 @@ import qualified Database.MongoDB as Mongo
 import Json
 
 -- import GHC.Types
-
-localDb :: Mongo.Database
-localDb = "local"
-
-opLogColl :: Mongo.Collection
-opLogColl = "oplog.rs"
 
 data Quote = Quote
   { instrumentSymbol :: Maybe Text,
@@ -57,7 +43,7 @@ tailOpLog pipe f = do
       -- We pick up inserts and updates to the single collection quotes.quote
       Mongo.access pipe Mongo.master localDb . Mongo.find $
         ( Mongo.select
-            [ "ns" =: "quotes.quote",
+            [ "ns" =: quoteNs,
               "$or" =: [["op" =: "i"], ["op" =: "u"]]
             ]
             opLogColl
@@ -72,22 +58,11 @@ tailOpLog pipe f = do
         else liftIO $ f xs
       loop cr
 
--- run :: (MonadUnliftIO m, MonadIO m) => (Mongo.Action m Mongo.Cursor -> m Mongo.Cursor) = Mongo.access pipe Mongo.master localDb
--- run2 :: (MonadUnliftIO m, MonadIO m) => (Mongo.Action m () -> m ()) = Mongo.access pipe Mongo.master localDb
-
 forkOplogTail :: (MonadUnliftIO m, MonadIO m) => ([Mongo.Document] -> IO ()) -> m (ThreadId, IO (Thread.Result ()))
 forkOplogTail f =
   liftIO $
     Thread.forkIO $
-      bracket (Mongo.connect (Mongo.host "127.0.0.1")) Mongo.close $
+      bracket (Mongo.connect mongoHost) Mongo.close $
         \pipe -> do
           tailOpLog pipe f
           return ()
-
--- main :: IO ()
--- main = do
---   print $ "main" ++ "Starting..."
---   (threadId, wait) <- Thread.forkIO $ bracket (Mongo.connect (Mongo.host "127.0.0.1")) Mongo.close $ \pipe -> tailOpLog pipe print
---   print $ "Thread forked " ++ show threadId
---   result <- wait
---   print $ "Thread done. Result = " ++ show result

@@ -38,23 +38,16 @@ stack run ws-server
 http://localhost:8080
 ## Running the Haskell CLI client
 
-You can run in interpreted mode:
-```
-app/wsClient.hs
-```
-
-or run the compiled version:
 ```
 stack run ws-client
 ```
-
-## Update Mongo database with some fake data
+## Update Mongo database with some fake data for about 30 seconds
 ```
-app/updateQuotesMongo.hs
+stack run update-quotes-mongo
 ```
-## tail mongo oplog and show raw oplog documents
+## tail mongo oplog and print raw oplog documents to console
 ```
-app/tailOplog.hs
+stack run tail-oplog
 ```
 
 You should see the quotes ticking in the Elm client and the CLI client writing them to the console 
@@ -62,3 +55,9 @@ You should see the quotes ticking in the Elm client and the CLI client writing t
 ## Known Issues
 - Assumes default Mongo port, hardcodes HTTP port 8080
 - Hardcodes db/collection names
+
+## Wishlist
+- don't hardcode ports, db collections
+- More realistic quote objects with 
+- Subscriptions
+- throttling. May want different rates for different subscriptions

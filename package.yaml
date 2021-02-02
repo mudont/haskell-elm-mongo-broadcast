@@ -93,7 +93,7 @@ executables:
   chat-client:
     main: chatClient.hs
     <<: *exe-defaults
-  tailOplog:
+  tail-oplog:
     main: tailOplog.hs
     <<: *exe-defaults
   update-quotes-mongo:
