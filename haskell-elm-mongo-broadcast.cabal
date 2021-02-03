@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7a6792ce936c47f0fa2f48ed9ae9d25542c693ae19264634f9f1d85f51bcb0e8
+-- hash: ef7f8f817c973df0fed38a5a21525a99a12ecb8aee33cbc0b846f00fe5263875
 
 name:           haskell-elm-mongo-broadcast
 version:        0.1.0.0
@@ -29,14 +29,17 @@ library
   exposed-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
   other-modules:
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       src
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -48,6 +51,7 @@ library
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -77,7 +81,9 @@ executable chat-client
   other-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
@@ -85,7 +91,8 @@ executable chat-client
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -97,6 +104,7 @@ executable chat-client
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -126,7 +134,9 @@ executable tail-oplog
   other-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
@@ -134,7 +144,8 @@ executable tail-oplog
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -146,6 +157,7 @@ executable tail-oplog
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -175,7 +187,9 @@ executable update-quotes-mongo
   other-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
@@ -183,7 +197,8 @@ executable update-quotes-mongo
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -195,6 +210,7 @@ executable update-quotes-mongo
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -224,7 +240,9 @@ executable ws-client
   other-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
@@ -232,7 +250,8 @@ executable ws-client
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -244,6 +263,7 @@ executable ws-client
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -273,7 +293,9 @@ executable ws-server
   other-modules:
       Config
       Json
+      Models
       Oplog
+      ServerState
       Paths_haskell_elm_mongo_broadcast
   hs-source-dirs:
       app
@@ -281,7 +303,8 @@ executable ws-server
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -293,6 +316,7 @@ executable ws-server
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network
@@ -327,7 +351,8 @@ test-suite oplog-test
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      AesonBson
+    , aeson
     , base >=4.7 && <5
     , bson
     , bytestring
@@ -339,6 +364,7 @@ test-suite oplog-test
     , ghc-prim
     , http-types
     , jose
+    , lens
     , mongoDB
     , mtl
     , network

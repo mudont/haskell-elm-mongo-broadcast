@@ -9,47 +9,83 @@ cradle:
     - path: "./src/chatClient.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
+    - path: "./app/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
     - path: "./app/Json.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
+    - path: "./app/Models.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
     - path: "./app/Oplog.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
+    - path: "./app/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
     - path: "./app/Paths_haskell_elm_mongo_broadcast.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
+    - path: "./src/Config.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
     - path: "./src/Json.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
+    - path: "./src/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
     - path: "./src/Oplog.hs"
+      component: "haskell-elm-mongo-broadcast:exe:chat-client"
+
+    - path: "./src/ServerState.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
     - path: "./src/Paths_haskell_elm_mongo_broadcast.hs"
       component: "haskell-elm-mongo-broadcast:exe:chat-client"
 
     - path: "./app/tailOplog.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./src/tailOplog.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./app/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./app/Json.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./app/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./app/Oplog.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./app/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./app/Paths_haskell_elm_mongo_broadcast.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./src/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./src/Json.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./src/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./src/Oplog.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
+
+    - path: "./src/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./src/Paths_haskell_elm_mongo_broadcast.hs"
-      component: "haskell-elm-mongo-broadcast:exe:tailOplog"
+      component: "haskell-elm-mongo-broadcast:exe:tail-oplog"
 
     - path: "./app/updateQuotesMongo.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
@@ -57,19 +93,37 @@ cradle:
     - path: "./src/updateQuotesMongo.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
+    - path: "./app/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
     - path: "./app/Json.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
+    - path: "./app/Models.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
     - path: "./app/Oplog.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
+    - path: "./app/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
     - path: "./app/Paths_haskell_elm_mongo_broadcast.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
+    - path: "./src/Config.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
     - path: "./src/Json.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
+    - path: "./src/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
     - path: "./src/Oplog.hs"
+      component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
+
+    - path: "./src/ServerState.hs"
       component: "haskell-elm-mongo-broadcast:exe:update-quotes-mongo"
 
     - path: "./src/Paths_haskell_elm_mongo_broadcast.hs"
@@ -81,19 +135,37 @@ cradle:
     - path: "./src/wsClient.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
+    - path: "./app/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
     - path: "./app/Json.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
+    - path: "./app/Models.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
     - path: "./app/Oplog.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
+    - path: "./app/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
     - path: "./app/Paths_haskell_elm_mongo_broadcast.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
+    - path: "./src/Config.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
     - path: "./src/Json.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
+    - path: "./src/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
     - path: "./src/Oplog.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-client"
+
+    - path: "./src/ServerState.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-client"
 
     - path: "./src/Paths_haskell_elm_mongo_broadcast.hs"
@@ -105,19 +177,37 @@ cradle:
     - path: "./src/wsServer.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
+    - path: "./app/Config.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
     - path: "./app/Json.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
+    - path: "./app/Models.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
     - path: "./app/Oplog.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
+    - path: "./app/ServerState.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
     - path: "./app/Paths_haskell_elm_mongo_broadcast.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
+    - path: "./src/Config.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
     - path: "./src/Json.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
+    - path: "./src/Models.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
     - path: "./src/Oplog.hs"
+      component: "haskell-elm-mongo-broadcast:exe:ws-server"
+
+    - path: "./src/ServerState.hs"
       component: "haskell-elm-mongo-broadcast:exe:ws-server"
 
     - path: "./src/Paths_haskell_elm_mongo_broadcast.hs"

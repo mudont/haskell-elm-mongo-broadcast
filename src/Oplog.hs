@@ -1,10 +1,9 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-
--- stack script --resolver lts-16.11
 
 module Oplog where
 
@@ -22,17 +21,12 @@ import Data.Text ()
 import Database.MongoDB (Field ((:=)), (=:))
 import qualified Database.MongoDB as Mongo
 import Json
+import Models
 
 -- import GHC.Types
 
-data Quote = Quote
-  { instrumentSymbol :: Maybe Text,
-    price :: Maybe Double
-  }
-  deriving (Generic, Show)
-
 {-
-{ "_id" : ObjectId("5fab2c08a32aa6abb7e453ab"), "spn" : 65939755, "ADV" : 0, "ADVMUL" : 1,
+{ "spn" : 65939755, "ADV" : 0, "ADVMUL" : 1,
 "ask" : 53.29, "ask_prices" : [ 53.29, 53.3, 53.31, 53.32, 53.33, 53.34, 53.35, 53.36, 53.37, 53.38 ],
 "ask_size" : [ ],
 "atm_implied_vol" : -1, "bid" : 53.27,
@@ -44,20 +38,22 @@ data Quote = Quote
 "cum_vol" : 1949, "date" : "20210201", "instr_expiry" : "20210520", "instr_type" : 3, "instr_type_str" : "FUTURE", "last_price" : 53.29, "last_size" : 1 }
 
 -}
-instance ToJSON Quote where
-  toJSON = genericToJSONNoPrefix ""
 
 tailOpLog :: (MonadUnliftIO m, MonadIO m) => Mongo.Pipe -> ([Mongo.Document] -> IO ()) -> m ()
 tailOpLog pipe f = do
   bracket acquire release (Mongo.access pipe Mongo.master localDb . loop)
   return ()
   where
-    acquire =
+    acquire = do
+      currTime <- liftIO getCurrentTime
+      liftIO $ print currTime
       -- We pick up inserts and updates to the single collection quotes.quote
       Mongo.access pipe Mongo.master localDb . Mongo.find $
         ( Mongo.select
-            [ "ns" =: quoteNs,
-              "$or" =: [["op" =: "i"], ["op" =: "u"]]
+            [ "$or" =: [["ns" =: quoteNs], ["ns" =: securityNs]],
+              -- "ns" =: securityNs,
+              "$or" =: [["op" =: "i"], ["op" =: "u"]],
+              "wall" =: ["$gt" =: currTime]
             ]
             opLogColl
         )

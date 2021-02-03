@@ -12,6 +12,7 @@ import ClassyPrelude hiding (delete, find, sort)
 import Config
 import Control.Concurrent
 import Control.Monad.Trans (liftIO)
+import Data.Functor
 import Database.MongoDB
   ( Action,
     Document,
@@ -45,7 +46,8 @@ run :: Int -> Action IO ()
 run max = do
   let loop n = do
         --clearQuotes
-        insertQuotes
+        -- insertQuotes
+        insertSecs
         --allQuotes >>= printDocs "All Quotes"
         liftIO $ threadDelay pauseBetweenUpdatesMicrosecs
         -- print n
@@ -54,10 +56,13 @@ run max = do
   loop 1
 
 clearQuotes :: Action IO ()
-clearQuotes = delete (select [] collName)
+clearQuotes = delete (select [] quoteColl)
 
 getNRands :: Int -> IO [Float]
 getNRands = ($ randomRIO (-1.0, 1 :: Float)) . replicateM
+
+getNRandInts :: Int -> IO [Int]
+getNRandInts = ($ randomRIO (1, 25 :: Int)) . replicateM
 
 getRows :: IO [(Selector, Document, [UpdateOption])]
 getRows = do
@@ -69,10 +74,44 @@ getRows = do
 insertQuotes :: Action IO WriteResult
 insertQuotes = do
   rows <- liftIO getRows
-  updateMany collName rows
+  updateMany quoteColl rows
+
+getSecRows :: IO [(Selector, Document, [UpdateOption])]
+getSecRows = do
+  rands <- getNRands $ length initialSecRows
+  randInts <- getNRandInts $ length initialSecRows
+  return $
+    map
+      ( \(sym, bS, bP, aS, aP) ->
+          ( ["sym" =: sym],
+            [ "sym" =: sym,
+              "bid_sizes" =: bS,
+              "bid_prices" =: bP,
+              "ask_sizes" =: aS,
+              "ask_prices" =: aP
+            ],
+            [Upsert]
+          )
+      )
+      $ zipWith
+        ( \(sym, bS, bP, aS, aP) (p, i) ->
+            ( sym,
+              map (+ i) bS,
+              map (+ p) bP,
+              map (+ i) aS,
+              map (+ p) aP
+            )
+        )
+        initialSecRows
+        $ zip rands randInts
+
+insertSecs :: Action IO WriteResult
+insertSecs = do
+  rows <- liftIO getSecRows
+  updateMany securityColl rows
 
 allQuotes :: Action IO [Document]
-allQuotes = rest =<< find (select [] collName) {sort = ["instrumentSymbol" =: 1]}
+allQuotes = rest =<< find (select [] quoteColl) {sort = ["instrumentSymbol" =: 1]}
 
 printDocs :: String -> [Document] -> Action IO ()
 printDocs title docs = liftIO $ print title >> mapM_ (print . exclude ["_id"]) docs

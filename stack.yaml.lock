@@ -25,6 +25,13 @@ packages:
       sha256: 085c6620bff7671bef1d969652a349271c3703fbf10dd753cb63ee1cd700bca5
   original:
     hackage: servant-websockets-2.0.0@sha256:6e9e3600bced90fd52ed3d1bf632205cb21479075b20d6637153cc4567000234,2253
+- completed:
+    hackage: AesonBson-0.4.0@sha256:fb368ec6f750d582c0630b2eb0d562d7eecab87da4a099593746298b27184a95,1333
+    pantry-tree:
+      size: 378
+      sha256: c77494ff9ecf48cf4675e4973f8cbcf946e5a4badb023c50ea5a7c788aced7b4
+  original:
+    hackage: AesonBson-0.4.0@sha256:fb368ec6f750d582c0630b2eb0d562d7eecab87da4a099593746298b27184a95,1333
 snapshots:
 - completed:
     size: 563100

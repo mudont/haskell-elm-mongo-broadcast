@@ -9,92 +9,93 @@
 -- keep the [reference](/reference/) nearby to check out the functions we use.
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Main where
 
--- import Prelude
-
--- import App
-import ClassyPrelude
-import Control.Monad (forever)
+import ClassyPrelude hiding (forM_)
+import Config
+import Control.Lens hiding (element)
+import Control.Lens.TH
+import Control.Monad (forM_, forever)
 import Control.Monad.Reader (ReaderT)
 import Data.Aeson
+import Data.AesonBson
+import qualified Data.ByteString.Lazy.Char8 as BLC
 import Data.Char (isPunctuation, isSpace)
 import Data.Monoid (mappend)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import Database.MongoDB
+import Models
 import Network.Wai (Application)
 import Network.Wai.Application.Static
 import Network.Wai.Handler.Warp
 import Network.Wai.Handler.WebSockets
 import qualified Network.WebSockets as WS
 import Oplog
-import Prelude (read)
-
--- We represent a client by their username and a `WS.Connection`. We will see how we
--- obtain this `WS.Connection` later on.
-
-type Client = (Text, WS.Connection)
-
--- The state kept on the server is simply a list of connected clients. We've added
--- an alias and some utility functions, so it will be easier to extend this state
--- later on.
-
-type ServerState = [Client]
-
--- Create a new, initial state:
-
-newServerState :: ServerState
-newServerState = []
-
--- Get the number of active clients:
-
-numClients :: ServerState -> Int
-numClients = length
-
--- Check if a user already exists (based on username):
-
-clientExists :: Client -> ServerState -> Bool
-clientExists client = any ((== fst client) . fst)
-
--- Add a client (this does not check if the client already exists, you should do
--- this yourself using `clientExists`):
-
-addClient :: Client -> ServerState -> ServerState
-addClient client clients = client : clients
-
--- Remove a client:
-
-removeClient :: Client -> ServerState -> ServerState
-removeClient client = filter ((/= fst client) . fst)
+import ServerState
+import Prelude (read, (!!))
 
 -- Send a message to all clients, and log it on stdout:
 
-broadcast :: Text -> ServerState -> IO ()
-broadcast message clients = do
-  T.putStrLn message
-  forM_ clients $ \(_, conn) -> WS.sendTextData conn message
+broadcast :: (WS.WebSocketsData a, Show a) => a -> ServerState -> IO ()
+broadcast message st = forM_ (st ^. clients) $ \(_, conn) -> WS.sendTextData conn message
 
-broadcastQuote :: Quote -> MVar ServerState -> IO ()
-broadcastQuote q state = do
-  let bs = encode q
-  -- T.putStrLn $ decodeUtf8 bs
-  readMVar state >>= \clients ->
-    forM_ clients $ \(_, conn) -> WS.sendTextData conn bs
+-- broadcastQuote :: Quote -> MVar ServerState -> IO ()
+-- broadcastQuote q state = do
+--   let bs = encode q
+--   readMVar state >>= \clients ->
+--     forM_ clients $ \(_, conn) -> WS.sendTextData conn bs
 
-handleDoc :: MVar ServerState -> Document -> IO ()
-handleDoc state doc =
-  let price = fromMaybe (doc !? "o.price") (doc !? "o2.price")
-   in broadcastQuote (Quote (doc !? "o.instrumentSymbol") price) state
+-- docToBS :: Document -> ByteString
+-- docToBS doc =
+--     let ns = fromMaybe "" (doc !? "ns")
+--       in case ns of
+--           quoteColl -> encode $ docToQuote doc
+--           securityColl -> encode $ docToQuote doc
+--           _ -> ""
 
-handleDocs :: MVar ServerState -> [Document] -> IO ()
-handleDocs state = mapM_ (handleDoc state)
+broadcastDoc :: ServerState -> Document -> IO ()
+broadcastDoc st doc =
+  let ns :: Text = fromMaybe "" (doc !? "ns")
+   in case ns of
+        _
+          | ns == quoteNs -> broadcast (encode $ docToQuote doc) st
+          | ns == securityNs -> broadcast (encode $ docToSecurity doc) st
+          | otherwise -> do
+            print $ ns <> ": unsupported collection"
+            return ()
+
+-- let resQuote = docToQuote doc
+-- print "DBG"
+-- case resQuote of
+--   Error e -> print e
+--   Success q -> broadcast (encode q) st
+
+-- let val = aesonify doc
+-- print $ show val
+-- broadcast (Data.Text.Conversions.toText $ show val) st
+
+-- broadcast bs st
+-- let conns = map snd $ st ^. clients
+-- print $ show (length conns) <> " clients"
+-- forM_ [1 .. length conns] $ \n -> do
+--   print $ "dummy loop " <> show (n -1) <> show bs
+--   print n
+--   WS.sendTextData (conns !! (n -1)) bs
+-- forM_ conns $ \conn -> do
+--   print $ "Sending " <> bs
+--   WS.sendTextData conn bs
+-- print "Done broadcast"
+
+handleDocs :: ServerState -> [Document] -> IO ()
+handleDocs state = mapM_ (broadcastDoc state)
 
 mongoThread :: MVar ServerState -> IO ()
 mongoThread state = do
-  (_threadId, _wait) <- forkOplogTail $ handleDocs state
+  (_threadId, _wait) <- forkOplogTail $ \docs -> readMVar state >>= \s -> handleDocs s docs
   print "MongoThread started"
   return ()
 
@@ -108,7 +109,7 @@ main = do
   let (port :: Int) = 8080
   state <- newMVar newServerState
   mongoThread state
-  print $ "WS server starting on port" <> show port
+  print $ "WS server starting on port " <> show port
   let wsApp = application state
   let app = websocketsOr WS.defaultConnectionOptions wsApp myStaticApp
   run port app
@@ -128,43 +129,41 @@ application :: MVar ServerState -> WS.ServerApp
 -- We also fork a pinging thread in the background. This will ensure the connection
 -- stays alive on some browsers.
 
-application state pending = do
+application stateM pending = do
   conn <- WS.acceptRequest pending
-  clients <- readMVar state
-  let client = (pack ("User " <> show (length clients)), conn)
+  state <- readMVar stateM
+  -- Make up a name for client - "User <UniqueNum>"
+  let client = (pack ("User " <> show (state ^. nextId)), conn)
   WS.withPingThread conn 30 (return ()) $ do
     -- When a client is succesfully connected, we read the first message. This should
     -- be in the format of "Hi! I am Jasper", where Jasper is the requested username.
     print "DBG ping thread"
     flip finally (disconnect client) $ do
-      -- We send a "Welcome!", according to our own little protocol. We add the client to
-      -- the list and broadcast the fact that he has joined. Then, we give control to the
-      -- 'talk' function.
-
-      modifyMVar_ state $ \s -> do
+      modifyMVar_ stateM $ \s -> do
         let s' = addClient client s
         WS.sendTextData conn $
           "Welcome! Users: "
-            <> T.intercalate ", " (map fst s)
-        broadcast (fst client <> " joined") s'
-        return s'
-      talk client state
+            <> T.intercalate ", " (map fst (s ^. clients))
+        broadcast (fst client <> " joined") s
+        return (bumpNextId s')
+      talk client stateM
   where
     disconnect client = do
       -- Remove client and return new state
-      s <- modifyMVar state $ \s ->
-        let s' = removeClient client s in return (s', s')
-      broadcast (fst client <> " disconnected") s
+      s'' <- modifyMVar stateM $ \s -> let s' = removeClient client s in return (s', s')
+      broadcast (fst client <> " disconnected") s''
 
 -- The talk function continues to read messages from a single client until he
 -- disconnects. All messages are broadcasted to the other clients.
 
 talk :: Client -> MVar ServerState -> IO ()
-talk (user, conn) state = forever $ do
+talk (user, conn) stateM = forever $ do
   msg <- WS.receiveData conn
-  readMVar state
-    >>= broadcast
-      (user `mappend` ": " `mappend` msg)
+  readMVar stateM
+    >>= \s ->
+      broadcast
+        (user `mappend` ": " `mappend` msg)
+        s
 
 myStaticApp :: Application
 myStaticApp = staticApp $ defaultFileServerSettings "./elm-client/build"
