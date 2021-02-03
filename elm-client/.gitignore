@@ -7,8 +7,6 @@ elm-stuff
 # elm-repl generated files
 repl-temp-*
 
-env
-
 # Dependency directories
 node_modules
 

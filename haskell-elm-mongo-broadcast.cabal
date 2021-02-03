@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ef7f8f817c973df0fed38a5a21525a99a12ecb8aee33cbc0b846f00fe5263875
+-- hash: b83ce4e7b713c709f4537cd1f8d2016cd5432db534970073c61803b55d57ec6c
 
 name:           haskell-elm-mongo-broadcast
 version:        0.1.0.0
@@ -37,59 +37,6 @@ library
   hs-source-dirs:
       src
   default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
-  build-depends:
-      AesonBson
-    , aeson
-    , base >=4.7 && <5
-    , bson
-    , bytestring
-    , case-insensitive
-    , classy-prelude
-    , containers
-    , data-has
-    , exceptions
-    , ghc-prim
-    , http-types
-    , jose
-    , lens
-    , mongoDB
-    , mtl
-    , network
-    , random
-    , servant
-    , servant-auth
-    , servant-auth-server
-    , servant-server
-    , servant-websockets
-    , split
-    , stm
-    , text
-    , threads
-    , time
-    , uuid
-    , wai
-    , wai-app-static
-    , wai-cors
-    , wai-logger
-    , wai-websockets
-    , warp
-    , websockets
-  default-language: Haskell2010
-
-executable chat-client
-  main-is: chatClient.hs
-  other-modules:
-      Config
-      Json
-      Models
-      Oplog
-      ServerState
-      Paths_haskell_elm_mongo_broadcast
-  hs-source-dirs:
-      app
-      src
-  default-extensions: NoImplicitPrelude OverloadedStrings TemplateHaskell DataKinds DeriveGeneric FlexibleContexts FlexibleInstances MultiParamTypeClasses GeneralizedNewtypeDeriving TypeOperators TypeFamilies ConstraintKinds
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AesonBson
     , aeson

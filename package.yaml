@@ -92,9 +92,6 @@ executables:
   ws-server:
     main: wsServer.hs
     <<: *exe-defaults
-  chat-client:
-    main: chatClient.hs
-    <<: *exe-defaults
   tail-oplog:
     main: tailOplog.hs
     <<: *exe-defaults
