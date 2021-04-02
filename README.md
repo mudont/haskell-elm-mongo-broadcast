@@ -13,8 +13,9 @@ If you don't have these already, install:
 - [Elm](https://elm-lang.org/):
 - [create-elm-app](https://github.com/halfzebra/create-elm-app):\
   ```npm install create-elm-app -g```
-- [MongoDB](https://docs.mongodb.com/manual/installation/) (version 4.4 known to work)
-  [Enable Replicas](https://docs.mongodb.com/manual/tutorial/deploy-replica-set/), because this app reads the Oplog. A single Mongo instance is enough. Don't need to actually replicate
+- [MongoDB](https://docs.mongodb.com/manual/installation/) (version 4.4 known to work).
+  [Enable Replicas](https://docs.mongodb.com/manual/tutorial/deploy-replica-set/), 
+  because this app reads the Oplog. A single Mongo instance is enough. Don't need to actually replicate
 
 ## Initialize Mongo database
 
